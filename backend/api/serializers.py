@@ -15,7 +15,7 @@ from users.serializers import UserSerializer
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    """Сериалайзер модели Favorite."""
+    """Сериализатор модели Favorite."""
     name = serializers.ReadOnlyField(
         source='recipe.name',
         read_only=True
@@ -39,7 +39,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
-    """Сериалайзер модели Cart."""
+    """Сериализатор модели Cart."""
     name = serializers.ReadOnlyField(
         source='recipe.name',
         read_only=True
@@ -59,10 +59,10 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = ('id', 'name', 'image', 'coocking_time')
-    
+
 
 class IngredientSerializer(serializers.ModelSerializer):
-    """Сериалайзер модели Ingredient."""
+    """Сериализатор модели Ingredient."""
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit')
@@ -70,7 +70,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
-    """Serializer для модели Tag."""
+    """Сериализатор модели Tag."""
     class Meta:
         model = Tag
         fields = ('id', 'name', 'color', 'slug')
@@ -78,7 +78,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientRecipeSerializer(serializers.ModelSerializer):
-    """Serializer для связаной модели Recipe и Ingredient."""
+    """Сериализатор для связаной модели Recipe и Ingredient."""
     id = serializers.ReadOnlyField(
         source='ingredient.id'
     )
@@ -96,7 +96,7 @@ class IngredientRecipeSerializer(serializers.ModelSerializer):
 
 class RecipeListSerializer(serializers.ModelSerializer):
     """
-    Serializer для модели Recipe - чтение данных.
+    Сериализатор для модели Recipe - чтение данных.
     Находится ли рецепт в избранном, списке покупок.
     Получение списка ингредиентов с добавленным полем
     amount из промежуточной модели.
@@ -121,26 +121,26 @@ class RecipeListSerializer(serializers.ModelSerializer):
             'is_favorited', 'is_in_shopping_cart',
             'name', 'image', 'text', 'cooking_time'
         )
-    
+
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
         if not user.is_anonymous:
             return Favorite.objects.filter(recipe=obj).exists()
         return False
-    
+
     def get_is_in_shopping_cart(self, obj):
         user = self.context.get('request').user
         if not user.is_anonymous:
             return ShoppingCart.objects.filter(recipe=obj).exists()
         return False
-    
+
 
 class AddIngredientSerializer(serializers.ModelSerializer):
     """
-    Serializer для поля ingredient модели Recipe - создание ингредиентов.
+    Сериализатор для поля ingredient модели Recipe - создание ингредиентов.
     """
     id = serializers.PrimaryKeyRelatedField(
-        queryset = Ingredient.objects.all()
+        queryset=Ingredient.objects.all()
     )
     amount = serializers.IntegerField()
 
@@ -150,7 +150,7 @@ class AddIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
-    """Serializer для модели Recipe - запись / обновление / удаление данных."""
+    """Сериализатор для модели Recipe-запись / обновление / удаление данных."""
     ingredients = AddIngredientSerializer(
         many=True,
         write_only=True
@@ -170,7 +170,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'ingredients', 'tags', 'image',
             'name', 'text', 'cooking_time', 'author'
         )
-    
+
     def validate_ingredients(self, value):
         ingredients = value
         if not ingredients:
@@ -185,7 +185,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             if ingredient in ingredients_list:
                 raise ValidationError(
                     {
-                        'ingredients':'Ингредиенты повторяются!'
+                        'ingredients': 'Ингредиенты повторяются!'
                     }
                 )
             if int(item['amount']) <= 0:
@@ -196,7 +196,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 )
             ingredients_list.append(ingredient)
         return value
-    
+
     def validate_tags(self, value):
         tags = value
         if not tags:
@@ -254,7 +254,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class RecipeMiniSerializer(serializers.ModelSerializer):
-    """Сериализатор предназначен для вывода рецептом в FollowSerializer."""
+    """Сериализатор предназначен для вывода рецептов в FollowSerializer."""
     class Meta:
         model = Recipe
         fields = (

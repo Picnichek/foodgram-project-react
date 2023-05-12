@@ -5,7 +5,6 @@ from django.db.models import Q, F
 from users.models import User
 
 
-
 class Ingredient(models.Model):
     """Ингридиенты для рецептов."""
     name = models.CharField(
@@ -26,14 +25,14 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return f'{self.name} {self.measurement_unit}'
+        return f'{self.name}'
 
 
 class Tag(models.Model):
     """Тэги для рецептов с предустановленным выбором."""
-    PURPLE = 'b813d1'
-    GREEN = '09db4f'
-    ORANGE = 'fa6a02'
+    PURPLE = '#b813d1'
+    GREEN = '#09db4f'
+    ORANGE = '#fa6a02'
     COLOR_CHOICES = (
         (GREEN, 'Зеленый'),
         (ORANGE, 'Оранжевый'),

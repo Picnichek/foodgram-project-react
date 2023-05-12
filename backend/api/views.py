@@ -52,7 +52,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.method in SAFE_METHODS:
             return RecipeListSerializer
         return RecipeWriteSerializer
-    
+
     @action(detail=True,
             methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
@@ -92,7 +92,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'Рецепт успешно удален из избранного.',
             status=status.HTTP_204_NO_CONTENT
         )
-    
+
     @action(detail=True,
             methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
@@ -103,7 +103,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
         recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
         user = self.request.user
-        if request.method =='POST':
+        if request.method == 'POST':
             if ShoppingCart.objects.filter(author=user,
                                            recipe=recipe).exists():
                 return Response(
@@ -130,7 +130,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'Рецепт успешно удален из списка покупок.',
             status=status.HTTP_204_NO_CONTENT
         )
-    
+
     @action(detail=False,
             methods=['get'],
             permission_classes=[IsAuthenticated])

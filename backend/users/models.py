@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     """
-    Кастомизированная модель пользователя.
+    Кастомная модель пользователя.
     Регистрация с помощью email.
     """
     USER = 'user'

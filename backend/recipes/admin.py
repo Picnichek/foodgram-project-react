@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.http.request import HttpRequest
 
 from .models import (
     Favorite,
@@ -10,6 +9,7 @@ from .models import (
     ShoppingCart,
     Tag,
     )
+
 
 class IngredientRecipeInLine(admin.TabularInline):
     """
@@ -59,7 +59,7 @@ class IngredientRecipeAdmin(admin.ModelAdmin):
 class RecipeAdmin(admin.ModelAdmin):
     """
     Админ-зона рецептов.
-    Добавлен просмотр кол-ва добавленных рецептов в избранное.
+    Добавлена информация о кол-ве добавленных рецептов в избранное.
     """
     list_display = ('id', 'author', 'name', 'pub_date', 'in_favorite', )
     search_fields = ('name',)

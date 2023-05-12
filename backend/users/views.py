@@ -28,7 +28,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.request.user
         serializer = UserSerializer(user, context={'request': request})
         return Response(serializer.data)
-    
+
     @action(['post'],
             detail=False,
             permission_classes=[IsAuthenticated])
@@ -46,9 +46,9 @@ class UserViewSet(viewsets.ModelViewSet):
             self.request.user.save()
             return Response('Пароль успешно изменен',
                             status=status.HTTP_204_NO_CONTENT)
-        return Response(serializer.errors, 
+        return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
-    
+
     @action(detail=True,
             methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
@@ -88,16 +88,15 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False,
             methods=['get'],
             permission_classes=[IsAuthenticated])
-    def subscriptions(self,request):
+    def subscriptions(self, request):
         """Отображает все подписки пользователя."""
-        follows = Follow.objects.filter(user-self.request.user)
+        follows = Follow.objects.filter(user=self.request.user)
         pages = self.paginate_queryset(follows)
         serializer = FollowSerializer(
             pages,
             many=True,
             context={
-                'request':request
+                'request': request
             }
         )
         return self.get_paginated_response(serializer.data)
-
