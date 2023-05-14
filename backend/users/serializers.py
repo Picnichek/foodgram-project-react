@@ -26,7 +26,8 @@ class UserSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         if not user.is_anonymous:
-            return Follow.objects.filter(user=user, author=obj).exists()
+            # return Follow.objects.filter(user=user, author=obj).exists()
+            return Follow.objects.select_related('author').filter(user=user, author=obj).exists()
         return False
 
     def create(self, validated_data):
@@ -52,7 +53,7 @@ class FollowSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         if not user.is_anonymous:
-            return Follow.objects.filter(
+            return Follow.objects.select_related('author').filter(
                 user=obj.user,
                 author=obj.author).exists()
         return False
@@ -60,13 +61,13 @@ class FollowSerializer(serializers.ModelSerializer):
     def get_recipes(self, obj):
         request = self.context.get('request')
         limit = request.GET.get('recipes_limit')
-        recipes = Recipe.objects.filter(author=obj.author)
+        recipes = Recipe.objects.prefetch_related('author').filter(author=obj.author)
         if limit and limit.isdigit():
             recipes = recipes[:int(limit)]
         return api.serializers.RecipeMiniSerializer(recipes, many=True).data
 
     def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj.author).count()
+        return Recipe.objects.prefetch_related('author').filter(author=obj.author).count()
 
     def validate(self, data):
         author = self.context.get('author')
