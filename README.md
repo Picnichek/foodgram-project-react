@@ -50,17 +50,17 @@ docker compose exec web python manage.py loaddata fixtures.json
 Собираем статику:
 
 ```bash
-docker-compose exec web python manage.py collectstatic --no-input
+docker compose exec web python manage.py collectstatic --no-input
 ```
 
 Создаем дамп базы данных (тестовая база присутствует в текущем репозитории):
 
 ```bash
-docker-compose exec web python manage.py dumpdata > fixtures.json
+docker compose exec web python manage.py dumpdata > fixtures.json
 ```
 
 Останавливаем контейнеры:
 
 ```bash
-docker-compose down -v
+docker compose down -v
 ```

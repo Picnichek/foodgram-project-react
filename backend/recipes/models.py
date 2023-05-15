@@ -1,6 +1,6 @@
-from django.db import models
 from django.core.validators import MinValueValidator
-from django.db.models import Q, F
+from django.db import models
+from django.db.models import F, Q
 
 from users.models import User
 
@@ -64,7 +64,7 @@ class Tag(models.Model):
         verbose_name_plural = 'Теги'
 
     def __str__(self):
-        return self.name
+        return self.slug
 
 
 class Recipe(models.Model):
