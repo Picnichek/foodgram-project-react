@@ -1,7 +1,6 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.utils import timezone
-
 from recipes.models import IngredientRecipe
 
 
@@ -11,7 +10,6 @@ def shopping_cart(self, request, author):
         recipe__shopping_cart__author=author).values(
             'ingredient__name', 'ingredient__measurement_unit').annotate(
                 amounts=Sum('amount')).order_by('amounts')
-    # today = date.today().strftime("%d-%m-%Y")
     today = timezone.now().strftime('%d-%m-%Y')
     shopping_list = f'Список покупок на: {today}\n\n'
     for ingredient in sum_ingredients_in_recipes:

@@ -203,7 +203,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 {'tags': 'Нужно выбрать тег!'}
             )
-        tags_list = []
+        tags_list = set([])
         for tag in tags:
             if tag in tags_list:
                 raise ValidationError(
