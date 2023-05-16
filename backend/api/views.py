@@ -182,7 +182,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_404_NOT_FOUND
             )
-        Favorite.objects.get(recipe=recipe).delete()
+        Favorite.objects.get(author=user, recipe=recipe).delete()
         return Response(
             'Рецепт успешно удален из избранного.',
             status=status.HTTP_204_NO_CONTENT
@@ -220,7 +220,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_404_NOT_FOUND
             )
-        ShoppingCart.objects.get(recipe=recipe).delete()
+        ShoppingCart.objects.get(author=user, recipe=recipe).delete()
         return Response(
             'Рецепт успешно удален из списка покупок.',
             status=status.HTTP_204_NO_CONTENT

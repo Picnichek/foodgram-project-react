@@ -4,33 +4,33 @@ Foodgram, «Продуктовый помощник». Онлайн-сервис
 
 ### Локальный запуск проекта:
 
-Клонируем репозиторий и переходим в него:
+**Клонируем репозиторий и переходим в него:**
 
 ```bash
 git clone https://github.com/Picnichek/foodgram-project-react.git
 cd yamdb_final
 ```
 
-Переходим в папку с файлом docker-compose.yaml:
+**Переходим в папку с файлом docker-compose.yaml:**
 
 ```bash
 cd infra
 ```
 
-Шаблон наполнения .env (в текущем репозитории называется '.env.template') который должен быть расположен по пути infra/.env
-переносим данные из '.env.template' в .env
+**Шаблон наполнения .env** (в текущем репозитории называется '.env.template') который должен быть расположен по пути infra/.env
+переносим данные из '.env.template' в .env:
 
 ```bash
 cp .env.template .env
 ```
 
-Поднимаем контейнеры (db-1, web-1, nginx-1):
+**Поднимаем контейнеры** (db-1, web-1, nginx-1):
 
 ```bash
 docker compose up -d --build
 ```
 
-Выполняем миграции:
+**Выполняем миграции:**
 
 ```bash
 docker compose exec web python manage.py makemigrations
@@ -40,26 +40,32 @@ docker compose exec web python manage.py makemigrations
 docker compose exec web python manage.py migrate
 ```
 
-Тестовая база данных и суперпользователь admin@admin.com(пароль:admin) присутствуют в файле fixtures.json, находящимся в корне проекта,
-можно выполнить команду:
+В файле fixtures.json, находящимся в корне проекта, присутствуют следующие данные:
+- Тестовая база данных;
+- суперпользователь admin@admin.com (пароль:admin);
+    - тестовые пользователи: 
+        - vpupkin@yandex.ru (пароль: Qwerty1234!); 
+        - example@example.com (пароль: example).<br>
+
+Для добавления их в **БД** нужно выполнить команду:
 
 ```bash
 docker compose exec web python manage.py loaddata fixtures.json
 ```
 
-Собираем статику:
+**Собираем статику:**
 
 ```bash
 docker compose exec web python manage.py collectstatic --no-input
 ```
 
-Создаем дамп базы данных (тестовая база присутствует в текущем репозитории):
+**При необходимости можно создать дамп базы данных** (тестовая база присутствует в текущем репозитории):
 
 ```bash
 docker compose exec web python manage.py dumpdata > fixtures.json
 ```
 
-Останавливаем контейнеры:
+**При завершении работы останавливаем контейнеры**:
 
 ```bash
 docker compose down -v
