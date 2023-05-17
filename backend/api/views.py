@@ -1,29 +1,22 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status, mixins
+from django_filters.rest_framework import DjangoFilterBackend
+from djoser.serializers import SetPasswordSerializer
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated, SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import (
-    Recipe, Tag, Ingredient,
-    Favorite, ShoppingCart, User, Follow
-)
 from api.filters import IngredientSearchFilter, RecipeFilter
 from api.paginations import ApiPagination
-from api.permissions import (
-    IsOwnerOrAdminOrReadOnly,
-    IsCurrentUserOrAdminOrReadOnly
-)
-from api.sevices import shopping_cart
-from api.serializers import (
-    RecipeListSerializer, TagSerializer,
-    IngredientSerializer, FavoriteSerializer,
-    ShoppingCartSerializer, RecipeWriteSerializer,
-    FollowSerializer, UserSerializer
-)
-
-from djoser.serializers import SetPasswordSerializer
+from api.permissions import (IsCurrentUserOrAdminOrReadOnly,
+                          IsOwnerOrAdminOrReadOnly)
+from api.serializers import (FavoriteSerializer, FollowSerializer,
+                          IngredientSerializer, RecipeListSerializer,
+                          RecipeWriteSerializer, ShoppingCartSerializer,
+                          TagSerializer, UserSerializer)
+from api.services import shopping_cart
+from recipes.models import (Favorite, Follow, Ingredient, Recipe, ShoppingCart,
+                            Tag, User)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -42,7 +35,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(user, context={'request': request})
         return Response(serializer.data)
 
-    @action(['post'],
+    @action(methods=['post'],
             detail=False,
             permission_classes=[IsAuthenticated])
     def set_password(self, request, *args, **kwargs):
@@ -54,13 +47,10 @@ class UserViewSet(viewsets.ModelViewSet):
             data=request.data,
             context={'request': request}
         )
-        if serializer.is_valid(raise_exception=True):
-            self.request.user.set_password(serializer.data['new_password'])
-            self.request.user.save()
-            return Response('Пароль успешно изменен',
-                            status=status.HTTP_204_NO_CONTENT)
-        return Response(serializer.errors,
-                        status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        self.request.user.set_password(serializer.data['new_password'])
+        self.request.user.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True,
             methods=['post', 'delete'],
@@ -77,26 +67,22 @@ class UserViewSet(viewsets.ModelViewSet):
                     'author': author
                 }
             )
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(author=author, user=user)
-                return Response(
-                    {'Подписка успешно создана': serializer.data},
-                    status=status.HTTP_201_CREATED
-                )
+            serializer.is_valid(raise_exception=True)
+            serializer.save(author=author, user=user)
             return Response(
-                {'errors': 'Объект не найден'},
+                {'Подписка успешно создана': serializer.data},
+                status=status.HTTP_201_CREATED
+            )
+        elif request.method == 'DELETE':
+            if Follow.objects.filter(author=author, user=user).exists():
+                Follow.objects.get(author=author, user=user).delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(
+                {
+                    'errors': 'Объект не найден'
+                },
                 status=status.HTTP_404_NOT_FOUND
             )
-        if Follow.objects.filter(author=author, user=user).exists():
-            Follow.objects.get(author=author).delete()
-            return Response('Успешная отписка',
-                            status=status.HTTP_204_NO_CONTENT)
-        return Response(
-            {
-                'errors': 'Объект не найден'
-            },
-            status=status.HTTP_404_NOT_FOUND
-        )
 
     @action(detail=False,
             methods=['get'],
@@ -206,25 +192,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             serializer = ShoppingCartSerializer(data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(author=user, recipe=recipe)
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-        if not ShoppingCart.objects.filter(author=user,
-                                           recipe=recipe).exists():
-            return Response(
-                {
-                    'errors': 'Объект не найден'
-                },
-                status=status.HTTP_404_NOT_FOUND
-            )
-        ShoppingCart.objects.get(author=user, recipe=recipe).delete()
-        return Response(
-            'Рецепт успешно удален из списка покупок.',
-            status=status.HTTP_204_NO_CONTENT
-        )
+            serializer.is_valid(raise_exception=True)
+            serializer.save(author=user, recipe=recipe)
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED)
+        if request.method == 'DELETE':
+            if not ShoppingCart.objects.filter(author=user,
+                                            recipe=recipe).exists():
+                return Response(
+                    {
+                        'errors': 'Объект не найден'
+                    },
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            ShoppingCart.objects.get(author=user, recipe=recipe).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False,
             methods=['get'],

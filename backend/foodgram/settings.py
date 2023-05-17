@@ -36,6 +36,13 @@ ALLOWED_HOSTS = [
     'testserver',
 ]
 
+INTERNAL_IPS = [
+    'web',
+    '127.0.0.1',
+    'localhost',
+    '[::1]',
+    'testserver',
+]
 
 
 # Application definition
@@ -47,7 +54,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'debug_toolbar',
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
@@ -57,6 +63,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig'
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -65,8 +72,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+if DEBUG:
+    INSTALLED_APPS += ['debug_toolbar', ]
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware', ]
 
 ROOT_URLCONF = 'foodgram.urls'
 
@@ -94,7 +104,7 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE'),
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('POSTGRES_USER'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
@@ -142,7 +152,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = BASE_DIR / 'static'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
