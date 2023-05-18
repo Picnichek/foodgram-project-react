@@ -12,12 +12,12 @@ class Ingredient(models.Model):
         verbose_name='Название ингредиента',
         db_index=True,
         help_text='Введите название ингредиента'
-        )
+    )
     measurement_unit = models.CharField(
         max_length=200,
         verbose_name='единица измерения',
         help_text='Введите единицу измерения'
-        )
+    )
 
     class Meta:
         ordering = ['id']
@@ -44,20 +44,20 @@ class Tag(models.Model):
         verbose_name='Название тега',
         help_text='Введите название тега',
         unique=True
-        )
+    )
     color = models.CharField(
         max_length=7,
         verbose_name='Название цвета "HEX"',
         unique=True,
         choices=COLOR_CHOICES,
         help_text='Выберите цвет'
-        )
+    )
     slug = models.SlugField(
         max_length=200,
         unique=True,
         verbose_name='ссылка',
         help_text='Укажите уникальную ссылку'
-        )
+    )
 
     class Meta:
         verbose_name = "Тег"

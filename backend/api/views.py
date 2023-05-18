@@ -9,11 +9,11 @@ from rest_framework.response import Response
 from api.filters import IngredientSearchFilter, RecipeFilter
 from api.paginations import ApiPagination
 from api.permissions import (IsCurrentUserOrAdminOrReadOnly,
-                          IsOwnerOrAdminOrReadOnly)
+                             IsOwnerOrAdminOrReadOnly)
 from api.serializers import (FavoriteSerializer, FollowSerializer,
-                          IngredientSerializer, RecipeListSerializer,
-                          RecipeWriteSerializer, ShoppingCartSerializer,
-                          TagSerializer, UserSerializer)
+                             IngredientSerializer, RecipeListSerializer,
+                             RecipeWriteSerializer, ShoppingCartSerializer,
+                             TagSerializer, UserSerializer)
 from api.services import shopping_cart
 from recipes.models import (Favorite, Follow, Ingredient, Recipe, ShoppingCart,
                             Tag, User)
@@ -73,7 +73,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 {'Подписка успешно создана': serializer.data},
                 status=status.HTTP_201_CREATED
             )
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             if Follow.objects.filter(author=author, user=user).exists():
                 Follow.objects.get(author=author, user=user).delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
@@ -83,6 +83,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_404_NOT_FOUND
             )
+        return None
 
     @action(detail=False,
             methods=['get'],
@@ -198,7 +199,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
             if not ShoppingCart.objects.filter(author=user,
-                                            recipe=recipe).exists():
+                                               recipe=recipe).exists():
                 return Response(
                     {
                         'errors': 'Объект не найден'
@@ -207,6 +208,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 )
             ShoppingCart.objects.get(author=user, recipe=recipe).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+        return None
 
     @action(detail=False,
             methods=['get'],
