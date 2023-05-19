@@ -1,8 +1,10 @@
 # **_Foodgram_**
 
+![CI](https://github.com/picnichek/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
+
 Foodgram, «Продуктовый помощник». Онлайн-сервис и API. На этом сервисе реализованы возможности публикации своих рецептов, подписки на публикации других пользователей, добавления понравившихся рецептов в список «Избранное», скачивания сводного списка продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
-### Локальный запуск проекта:
+## Локальный запуск проекта
 
 **Клонируем репозиторий и переходим в него:**
 
@@ -70,3 +72,79 @@ docker compose exec web python manage.py dumpdata > fixtures.json
 ```bash
 docker compose down -v
 ```
+
+## Запуск проекта на удаленном сервере
+
+**Клонируем репозиторий и переходим в него:**
+
+```bash
+git clone https://github.com/Picnichek/foodgram-project-react.git
+cd yamdb_final
+```
+
+**Заходим в settings.py и указываем свой внешний ip и доменное имя в ALLOWED_HOSTS**
+
+```bash
+ALLOWED_HOSTS = [
+    'web',
+    'ip', 
+    'site_name.com',
+    'localhost',
+    '127.0.0.1',
+    '[::1]',
+    'testserver',
+]
+```
+
+**Установливаем на сервере Docker, Docker Compose:**
+
+```bash
+sudo apt install curl                                   - установка утилиты для скачивания файлов
+curl -fsSL https://get.docker.com -o get-docker.sh      - скачать скрипт для установки
+sh get-docker.sh                                        - запуск скрипта
+sudo apt-get install docker-compose-plugin              - последняя версия docker compose
+```
+
+**Скопировать на сервер файлы docker-compose.yml, nginx.conf из папки infra (команды выполнять находясь в папке infra):**
+
+```bash
+scp docker-compose.yml nginx.conf username@IP:/home/username/
+
+# username - имя пользователя на сервере
+# IP - публичный IP сервера
+```
+
+**В файле nginx.conf необходимо указать свой адрес сервера и доменное имя в строке "server_name"**
+
+```bash
+server_name ip host_name.com;
+```
+
+**Для работы с GitHub Actions необходимо в репозитории в разделе Secrets - Actions создать переменные окружения:**
+
+```bash
+DOCKER_PASSWORD         - пароль от Docker Hub
+DOCKER_USERNAME         - логин Docker Hub
+HOST                    - публичный IP сервера
+USER                    - имя пользователя на сервере
+PASSPHRASE              - *если ssh-ключ защищен паролем
+SSH_KEY                 - приватный ssh-ключ, узнать можно с помощью "cat ~/.ssh/id_rsa" по умолчанию
+TELEGRAM_TO             - ID телеграм-аккаунта для посылки сообщения
+TELEGRAM_TOKEN          - токен бота, посылающего сообщение
+
+DB_NAME                 - postgres
+POSTGRES_USER           - postgres
+POSTGRES_PASSWORD       - postgres
+DB_HOST                 - db
+DB_PORT                 - 5432 (порт по умолчанию)
+```
+
+**Выполнить шаги описанные с шага "Поднимаем контейнеры" из инструкции "Локальный запуск проекта"**
+
+
+**После каждого обновления репозитория (push в ветку master) будет происходить:**
+
+1. Проверка кода на соответствие стандарту PEP8 (с помощью пакета flake8)
+2. Сборка и доставка докер-образов frontend и backend на Docker Hub
+3. Разворачивание проекта на удаленном сервере
+4. Отправка сообщения в Telegram в случае успеха

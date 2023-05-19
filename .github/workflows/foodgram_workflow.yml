@@ -1,4 +1,4 @@
-name: Foodgram
+name: Foodgram_workflow
 on: [push]
 
 jobs:
@@ -77,4 +77,4 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: ${{ github.workflow }} успешно выполнен!
+          message: Деплой проекта ${{ github.workflow }} успешно выполнен!
