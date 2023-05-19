@@ -31,7 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'web',
     '158.160.47.115',
-    'foodgram-delicious.ddns.net'
+    'foodgram-delicious.ddns.net',
     'localhost',
     '127.0.0.1',
     '[::1]',
