@@ -40,5 +40,6 @@ services:
       - media_value:/var/html/media/
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
+      - redoc:/usr/share/nginx/html/api/docs/
     depends_on:
       - web
