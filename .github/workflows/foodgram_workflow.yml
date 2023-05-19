@@ -54,9 +54,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            sudo docker compose stop
-            sudo docker container rm picnichek-web-1
-            sudo docker container rm picnichek-frontend-1
+            sudo docker stop picnichek_web_1
+            sudo docker rm picnichek_web_1
+            sudo docker stop picnichek_frontend_1
+            sudo docker rm picnichek_frontend_1
             touch .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
             echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
