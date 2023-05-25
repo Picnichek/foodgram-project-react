@@ -3,7 +3,7 @@
 ![CI](https://github.com/picnichek/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 
 ## Описание проекта
-----------
+
 http://158.160.47.115/ - внешний ip<br>
 http://foodgram-delicious.ddns.net/ - доменное имя<br>
 http://158.160.47.115/api/docs/ - редок можно глянуть тут<br>
