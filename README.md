@@ -12,7 +12,7 @@ Foodgram, «Продуктовый помощник». Онлайн-сервис
 
 ## Стек технологий
 * Python 3.7
-* Django 3.1
+* Django 2.2.19
 * Rest API
 * PostgreSQL
 * Nginx
